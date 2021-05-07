@@ -1,0 +1,27 @@
+{
+  "name": "resource-slackbot",
+  "version": "1.0.0",
+  "description": "A slack bot for maintaining shared resources.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahir-shaikh/resource-slackbot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mahir-shaikh/resource-slackbot/issues"
+  },
+  "homepage": "https://github.com/mahir-shaikh/resource-slackbot#readme",
+  "dependencies": {
+    "dotenv": "^9.0.0",
+    "mongoose": "^5.12.7",
+    "slackbots": "^1.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
