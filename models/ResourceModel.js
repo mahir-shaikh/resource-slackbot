@@ -21,7 +21,11 @@ const ResourceSchema = new Schema({
     },
 
     claimTime: {
-        type: Date
+        type: Number // will be in milliseconds
+    },
+
+    duration: {
+        type: Number // will be in milliseconds
     },
 
     isClaimed: {
@@ -31,4 +35,4 @@ const ResourceSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model( 'resources', ResourceSchema)
+module.exports = mongoose.model('resources', ResourceSchema)

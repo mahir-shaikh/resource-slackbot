@@ -45,17 +45,22 @@ sbConnection.attachListeners = function(){
 
 
 function handleMessage(message, data) {
-    let action = message.split('|')[0]
-    let resource_name = message.split('|')[1]
-    // let duration = message.split('|')[2]
-    // let owner = data.user;
-    // let claimTime = new Date().now()
+    let action = message.split('|')[0] ? message.split('|')[0].trim() : null
+    let resource_name = message.split('|')[1] ? message.split('|')[1].trim() : null
+    let duration = message.split('|')[2] ? message.split('|')[2].trim() : 2 // integer will be in days, defualt 2 days
+    let description = message.split('|')[3] ? message.split('|')[3].trim() : null
+    let owner = data.user;
+    let claimTime = new Date().getTime()
     switch (action) {
         case 'add':
             dbConnection.addNewResource(resource_name)
         break;
         case 'remove':
             dbConnection.removeExistingResource(resource_name)
+        break;
+        case 'claim':
+            let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
+            dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description)
         break;
     
         default:
