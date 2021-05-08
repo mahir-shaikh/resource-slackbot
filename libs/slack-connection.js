@@ -62,6 +62,9 @@ function handleMessage(message, data) {
             let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
             dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description)
         break;
+        case 'release':
+            dbConnection.release(resource_name, owner)
+        break;
     
         default:
             runHelp()

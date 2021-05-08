@@ -92,6 +92,40 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
     }
 }
 
+dbConnection.release = async function(name, owner){
+    /*
+    resource exist? - true
+        isClaimed ? true
+            Claimed by me? owner?
+                allow - release
+            Not claimed by be ? error 
+                you do not have have enough rights to release this
+        isClaimed? false
+            no need to release chutiye
+    resource exist? - false
+        error message
+    */
+
+    try{
+        let resource = await RESOURCE.findOne({name: name})
+        if(resource){
+            if(resource.isClaimed){
+                if(resource.owner == owner){
+                    releaseResource(resource)
+                }else{
+                    sbConnection.sendMessageToChannel(`You cannot release the resource ${name} as it is  was not claimed by you. Please ask ${resource.owner} to release`)
+                }
+            }else{
+                sbConnection.sendMessageToChannel(`No need to release as the resource. ${name} is already free`)
+            }
+        }else{
+            sbConnection.sendMessageToChannel(`No such resource exists: ${name}`)
+        }
+    }catch(e){
+        logger.log(e)
+    }
+}
+
 function claimResource(resource, name, duration, claimTime, owner, description){
     try{
         RESOURCE.findByIdAndUpdate(resource._id, {
@@ -101,9 +135,28 @@ function claimResource(resource, name, duration, claimTime, owner, description){
             duration: duration,
             isClaimed: true
         }).then((updatedDocument)=>{
-            sbConnection.sendMessageToChannel(`${name} has been claimed successfuly by ${owner}`)
+            sbConnection.sendMessageToChannel(`${name} has been claimed successfully by ${owner}`)
         }).catch((e)=>{
             sbConnection.sendMessageToChannel(`Some error occured while claiming ${name}`)
+        })
+        
+    }catch(e){
+        logger.log(e)
+    }
+
+}
+function releaseResource(resource){
+    try{
+        RESOURCE.findByIdAndUpdate(resource._id, {
+            owner: null,
+            message: null,
+            claimTime: null,
+            duration: null,
+            isClaimed: false
+        }).then((updatedDocument)=>{
+            sbConnection.sendMessageToChannel(`${updatedDocument.name} has been released successfully by ${resource.owner}`)
+        }).catch((e)=>{
+            sbConnection.sendMessageToChannel(`Some error occured while releasing ${resource.name}`)
         })
         
     }catch(e){
