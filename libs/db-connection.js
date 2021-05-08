@@ -77,8 +77,8 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
                     claimResource(resource, name, duration, claimTime, owner, description)
                 }else{
                     // already being used by xyz till time...
-                    let time = new Date(resource.claimTime + resource.duration)
-                    sbConnection.sendMessageToChannel(`Cannot Claim the resource ${name} as it is already being used by ${resource.owner} till ${time}`)
+                    let time = parseInt(new Date(resource.claimTime + resource.duration)/1000)
+                    sbConnection.sendMessageToChannel(`Cannot Claim the resource ${name} as it is already being used by <@${resource.owner}> till <!date^${time}^{date}|Date not available :person_frowning:>`)
                 }
             }else{
                 // claim the resource
@@ -113,7 +113,7 @@ dbConnection.release = async function(name, owner){
                 if(resource.owner == owner){
                     releaseResource(resource)
                 }else{
-                    sbConnection.sendMessageToChannel(`You cannot release the resource ${name} as it is  was not claimed by you. Please ask ${resource.owner} to release`)
+                    sbConnection.sendMessageToChannel(`You cannot release the resource ${name} as it is  was not claimed by you. Please ask <@${resource.owner}> to release`)
                 }
             }else{
                 sbConnection.sendMessageToChannel(`No need to release as the resource. ${name} is already free`)
@@ -126,6 +126,43 @@ dbConnection.release = async function(name, owner){
     }
 }
 
+dbConnection.getAllResources = function(){
+    RESOURCE.find().then((resources)=>{
+        let finalString = ''
+        for (let i = 0; i < resources.length; i++) {
+            const element = resources[i];
+
+            finalString += '• *'+element.name +'*'
+            finalString += element.isClaimed ? " - " : ' - Available'
+            if(element.isClaimed){
+                finalString += ' *Claimed By:* <@'+ element.owner + '>'
+                finalString += ' - '+ '_' + element.message + '_'
+                finalString += ' *Claimed on:* ' + '<!date^'+parseInt(element.claimTime/1000)+'^{date}|Date not available :person_frowning:>'//Need to format it as DD MM YYYY
+                finalString += ' *Claimed till:* ' + '<!date^'+parseInt((element.claimTime + element.duration)/1000)+'^{date}|Date not available :person_frowning:>' //Need to format it as DD MM YYYY
+            }
+            
+            finalString += '\n'
+        }
+
+        sbConnection.sendMessageToChannel(finalString)
+    }).catch((e) =>{
+        logger.log(e)
+    })
+}
+
+dbConnection.getAvailableResources = function(){
+    RESOURCE.find({isClaimed: true}).then((resources)=>{
+        
+        let simplefiedArray = resources.map((element, index)=>{
+            return '• ' + element.name
+        }).sort()
+
+        sbConnection.sendMessageToChannel('```'+simplefiedArray.join('\n')+'```')
+    }).catch((e) =>{
+        logger.log(e)
+    })
+}
+
 function claimResource(resource, name, duration, claimTime, owner, description){
     try{
         RESOURCE.findByIdAndUpdate(resource._id, {
@@ -135,7 +172,7 @@ function claimResource(resource, name, duration, claimTime, owner, description){
             duration: duration,
             isClaimed: true
         }).then((updatedDocument)=>{
-            sbConnection.sendMessageToChannel(`${name} has been claimed successfully by ${owner}`)
+            sbConnection.sendMessageToChannel(`*${name}* has been claimed successfully by <@${owner}>`)
         }).catch((e)=>{
             sbConnection.sendMessageToChannel(`Some error occured while claiming ${name}`)
         })
@@ -154,7 +191,7 @@ function releaseResource(resource){
             duration: null,
             isClaimed: false
         }).then((updatedDocument)=>{
-            sbConnection.sendMessageToChannel(`${updatedDocument.name} has been released successfully by ${resource.owner}`)
+            sbConnection.sendMessageToChannel(`${updatedDocument.name} has been released successfully by <@${resource.owner}>`)
         }).catch((e)=>{
             sbConnection.sendMessageToChannel(`Some error occured while releasing ${resource.name}`)
         })

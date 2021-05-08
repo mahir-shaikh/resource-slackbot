@@ -65,6 +65,12 @@ function handleMessage(message, data) {
         case 'release':
             dbConnection.release(resource_name, owner)
         break;
+        case 'list':
+            dbConnection.getAllResources()
+        break
+        case 'list available':
+            dbConnection.getAvailableResources()
+        break;
     
         default:
             runHelp()
