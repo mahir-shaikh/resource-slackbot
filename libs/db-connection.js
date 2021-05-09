@@ -269,13 +269,15 @@ dbConnection.addMultipleResource =  async function(body, channelId) {
 
         body = body.filter((item)=>{
             return !allResources.includes(item)
-        }).map((obj)=>{
-            return {
-                name: obj,
-                channelId: channelId
-            }
         })
     }
+
+    body = body.map((obj)=>{
+        return {
+            name: obj,
+            channelId: channelId
+        }
+    })
 
     RESOURCE.insertMany(body).then(function(){
             let message = '';
