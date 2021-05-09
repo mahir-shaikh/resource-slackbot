@@ -2,7 +2,7 @@ dbConnection = {}
 module.exports = dbConnection
 
 const mongoose = require('mongoose');
-const MongoDBURL = process.env.MongoURL || "mongodb://localhost:27017/appusage-slackbot";
+const MongoDBURL = process.env.MongoURL;
 var RESOURCE = require('../models/ResourceModel')
 
 const sbConnection = require('./slack-connection.js')
