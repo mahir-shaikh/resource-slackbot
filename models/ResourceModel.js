@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const ResourceSchema = new Schema({
     name: {
         type: String,
-        unique: true,
         required: true
     },
 
@@ -32,6 +31,11 @@ const ResourceSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+
+    channelId: {
+        type: String,
+        required: true  
     }
 })
 

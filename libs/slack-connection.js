@@ -25,6 +25,7 @@ sbConnection.attachListeners = function(){
     
     // Error Handle
     bot.on('error', (err) => {
+        logger.log("Bot Error:");
         logger.log(err);
     })
     
@@ -51,25 +52,26 @@ function handleMessage(message, data) {
     let description = message.split('|')[3] ? message.split('|')[3].trim() : null
     let owner = data.user;
     let claimTime = new Date().getTime()
+    let channelId = data.channel;
     switch (action) {
         case 'add':
-            dbConnection.addNewResource(resource_name)
+            dbConnection.addNewResource(resource_name, channelId)
         break;
         case 'remove':
-            dbConnection.removeExistingResource(resource_name)
+            dbConnection.removeExistingResource(resource_name, channelId)
         break;
         case 'claim':
             let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
-            dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description)
+            dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description, channelId)
         break;
         case 'release':
-            dbConnection.release(resource_name, owner)
+            dbConnection.release(resource_name, owner, channelId)
         break;
         case 'list':
-            dbConnection.getAllResources()
+            dbConnection.getAllResources(channelId)
         break
         case 'list available':
-            dbConnection.getAvailableResources()
+            dbConnection.getAvailableResources(channelId)
         break;
     
         default:
@@ -91,9 +93,9 @@ function runHelp() {
     );
 }
 
-sbConnection.sendMessageToChannel = function(message, params = {}) {
-    bot.postMessageToChannel(
-        'test1',
+sbConnection.sendMessageToChannel = function(channelId, message, params = {}) {
+    bot.postMessage(
+        channelId,
         `${message}`,
         params
     );
