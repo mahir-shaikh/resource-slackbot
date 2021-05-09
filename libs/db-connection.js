@@ -166,7 +166,7 @@ dbConnection.release = async function(name, owner, channelId){
         if(resource){
             if(resource.isClaimed){
                 if(resource.owner == owner){
-                    releaseResource(resource)
+                    releaseResource(resource, channelId)
                 }else{
                     sbConnection.sendMessageToChannel(channelId, `You cannot release the resource ${name} as it is  was not claimed by you. Please ask <@${resource.owner}> to release`)
                 }
