@@ -6,13 +6,14 @@ const logger = require('./logger');
 var dbConnection = require('./db-connection')
 
 var bot;
+var botId;
 
 sbConnection.createBot = function(){
     // Slack Connection
     logger.log(process.env.BOT_TOKEN)
     bot = new SlackBot({
         token: `${process.env.BOT_TOKEN}`,
-        name: 'appdemo_legacy_bot'
+        name: `${process.env.BOT_NAME}`
     })
 }
 
@@ -20,7 +21,8 @@ sbConnection.attachListeners = function(){
     bot.on('start', () => {
         const params = {
             icon_emoji: ':robot_face:'
-        }    
+        }
+        botId = bot.self.id || null;
     })
     
     // Error Handle
@@ -34,10 +36,10 @@ sbConnection.attachListeners = function(){
         if(data.type !== 'message') {
             return;
         }
-        //Check if message is directed to Bot // TODO: confirm ID Later, updated as per channel
-        if(data.text.indexOf('<@U021FMX8FSQ>') == 0){
+        //Check if message is directed to Bot // TODO: confirm ID Later, updated as per bot
+        if(data.text.indexOf(`<@${botId}>`) == 0){
             // logger.log("Message to Bot", data)
-            let message = data.text.replace('<@U021FMX8FSQ>', '').trim()
+            let message = data.text.replace(`<@${botId}>`, '').trim()
             handleMessage(message, data);
         }
     })
@@ -78,22 +80,37 @@ function handleMessage(message, data) {
         case 'list available':
             dbConnection.getAvailableResources(channelId)
         break;
-    
+        case 'help':
+            runHelp(channelId)
+        break;
         default:
-            runHelp()
-            break;
+            errorText(channelId)
+        break;
     }
 }
 
 
-function runHelp() {
+function runHelp(channelId) {
     const params = {
-        icon_emoji: ':question:'
+        // icon_emoji: ':question:'
     }
 
-    bot.postMessageToChannel(
-        'test1',
-        `Some Help text.... will provide later`,
+    bot.postMessage(
+        channelId,
+        `You can use me by typing \`<@${botId}> <command>\`.\nPlease find all the possible commands below:\n• *list*: List all the resources\n• *list available*:  List all resources which are currently available\n• *add|<name>*: Add a resource with name <name>\n• *add|<name>,<name>,<name>,...*: Add multiple resources at a time\n• *remove|<name>*: Remove the resource with name <name>\n• *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description\n• *release|<name>*: Release your claim on resource with name <name>
+        `,
+        params
+    );
+}
+
+function errorText(channelId) {
+    const params = {
+        icon_emoji: ''
+    }
+
+    bot.postMessage(
+        channelId,
+        `:question: Oops!!! I do not recognize this command. See \`<@${botId}> help\` for list of my commands`,
         params
     );
 }
