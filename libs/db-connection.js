@@ -8,19 +8,51 @@ var RESOURCE = require('../models/ResourceModel')
 const sbConnection = require('./slack-connection.js')
 const logger = require('./logger')
 
-// const CronJob = require('cron').CronJob;
+const CronJob = require('cron').CronJob;
 
-// dbConnection.startCron = function() {
-//     var job = new CronJob(
-//     '* * * * * *', function(){
-//         onCronTick()
-//     }, null, true, 'America/Los_Angeles');
-//     job.start();
-// }
+dbConnection.startCron = function() {
+    var job = new CronJob(
+    '0 */360 * * * *', //Run every 6 hours
+    function(){
+        onCronTick()
+    }, null, true, 'America/Los_Angeles');
+    job.start();
+}
 
-// function onCronTick() {
-//     logger.log('triggered');
-// }
+async function onCronTick() {
+    try {
+        let allResources = await RESOURCE.find({isClaimed : true});
+        let expiredResource = [];
+        let currentTime = new Date().getTime();
+        for (let i = 0; i < allResources.length; i++) {
+            let bucket = allResources[i];
+            let totalTime = bucket.claimTime + bucket.duration;
+            if(currentTime >= totalTime) {
+                expiredResource.push(mongoose.Types.ObjectId(bucket._id));
+            }
+        }
+        if(expiredResource.length) {
+            releaseAll(expiredResource);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+async function releaseAll(expiredResource) {
+    try {
+        let allResources = await RESOURCE.updateMany({'_id' : {$in : expiredResource}}, {
+            owner: null,
+            message: null,
+            claimTime: null,
+            duration: null,
+            isClaimed: false
+        });
+        logger.log('all expired resources are availabel now');
+    } catch (error) {
+        logger.log(error);
+    }
+}
 
 dbConnection.connect = function(){
     logger.log(MongoDBURL)
@@ -97,7 +129,7 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
         if(resource){
             if(resource.isClaimed){
                 if(resource.owner == owner){
-                    claimResource(resource, name, duration, claimTime, owner, description)
+                    claimResource(resource, name, duration, claimTime, owner, description, channelId)
                 }else{
                     // already being used by xyz till time...
                     let time = parseInt(new Date(resource.claimTime + resource.duration)/1000)
@@ -105,7 +137,7 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
                 }
             }else{
                 // claim the resource
-                claimResource(resource, name, duration, claimTime, owner, description)
+                claimResource(resource, name, duration, claimTime, owner, description, channelId)
             }
         }else{
             sbConnection.sendMessageToChannel(channelId, `No such resource exists: ${name}`)
@@ -177,7 +209,7 @@ dbConnection.getAllResources = function(channelId){
 }
 
 dbConnection.getAvailableResources = function(channelId){
-    RESOURCE.find({isClaimed: true, channelId: channelId}).then((resources)=>{
+    RESOURCE.find({isClaimed: false, channelId: channelId}).then((resources)=>{
         
         let simplefiedArray = resources.map((element, index)=>{
             return '• ' + element.name
@@ -226,4 +258,37 @@ function releaseResource(resource, channelId){
         logger.log(e)
     }
 
+}
+
+dbConnection.addMultipleResource =  async function(body, channelId) { 
+    let allResources = await RESOURCE.find({'name' : {$in : body}, channelId : channelId})
+    if(allResources.length){
+        allResources = allResources.map((resource)=>{
+            return resource.name;
+        })
+
+        body = body.filter((item)=>{
+            return !allResources.includes(item)
+        }).map((obj)=>{
+            return {
+                name: obj,
+                channelId: channelId
+            }
+        })
+    }
+
+    RESOURCE.insertMany(body).then(function(){
+            let message = '';
+            if(allResources.length){
+                message += '*' + allResources.join(",") + '* already exists in DB and were not re-added \n'
+            }
+            minifiedBody = body.map((item)=> item.name)
+            if(minifiedBody){
+                message += '*' + minifiedBody.join(",") + '* were successfully added in DB \n'
+            }
+            sbConnection.sendMessageToChannel(channelId, message)
+            logger.log("Data inserted")  // Success
+        }).catch(function(error){
+            logger.log(error)      // Failure
+        });
 }

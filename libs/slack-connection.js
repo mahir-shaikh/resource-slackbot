@@ -55,13 +55,18 @@ function handleMessage(message, data) {
     let channelId = data.channel;
     switch (action) {
         case 'add':
-            dbConnection.addNewResource(resource_name, channelId)
+            if(resource_name && resource_name.split(',').length > 1){
+                dbConnection.addMultipleResource(resource_name.split(','), channelId)
+            }else{
+                dbConnection.addNewResource(resource_name, channelId)
+            }
         break;
         case 'remove':
             dbConnection.removeExistingResource(resource_name, channelId)
         break;
         case 'claim':
             let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
+            // let durationInMilliSeconds = parseInt(duration)*60*1000; // Store as minute for testing purpose
             dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description, channelId)
         break;
         case 'release':
