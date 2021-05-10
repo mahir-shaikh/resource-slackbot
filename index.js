@@ -27,3 +27,31 @@ dbConnection.startCron();
 //
 sbConnection.createBot()
 sbConnection.attachListeners()
+
+
+//Keep app alive as Heroku sleeps in 30mins of inactivity
+var http = require('http'); //importing http
+
+function startKeepAlive() {
+    setInterval(function() {
+        var options = {
+            host: 'appdemo-usage-bot.herokuapp.com',
+            path: '/'
+        };
+        http.get(options, function(res) {
+            res.on('data', function(chunk) {
+                try {
+                    // optional logging... disable after it's working
+                    console.log("HEROKU RESPONSE: " + chunk);
+                } catch (err) {
+                    console.log(err.message);
+                }
+            });
+        }).on('error', function(err) {
+            console.log("Error: " + err.message);
+        });
+    }, 20 * 60 * 1000); // load every 20 minutes
+}
+if(process.env.KEEP_ALIVE){
+    startKeepAlive();
+}
