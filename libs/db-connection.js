@@ -95,7 +95,7 @@ dbConnection.removeExistingResource = async function(name, channelId, removeForc
                     // remove resource from DB
                     removeResource(resource, channelId)
                 }else{
-                    sbConnection.sendMessageToChannel(channelId, `You cannot remove a resource which is being used(is claimed by someone). \n Please ask <@${resource.owner}> to release ${name} before it can be removed. `)
+                    sbConnection.sendMessageToChannel(channelId, `You cannot remove a resource which is being used (is claimed by someone). \n Please ask <@${resource.owner}> to release ${name} before it can be removed. `)
                 }
             }else{
                 // remove resource from DB
