@@ -91,7 +91,7 @@ dbConnection.removeExistingResource = async function(name, channelId, removeForc
     try{
         let resource = await RESOURCE.findOne({name: name, channelId: channelId})
         if(resource){
-            if(resource.isClaimed && !removeForcefully){
+            if(resource.isClaimed){
                 if(removeForcefully){
                     // remove resource from DB
                     removeResource(resource, channelId)
