@@ -10,7 +10,7 @@ var botId;
 
 sbConnection.createBot = function(){
     // Slack Connection
-    logger.log(process.env.BOT_TOKEN)
+    logger.log('---- Bot is being created -----')
     bot = new SlackBot({
         token: `${process.env.BOT_TOKEN}`,
         name: `${process.env.BOT_NAME}`
