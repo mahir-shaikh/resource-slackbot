@@ -55,7 +55,6 @@ async function releaseAll(expiredResource) {
 }
 
 dbConnection.connect = function(){
-    logger.log(MongoDBURL)
     //Mongoose connection
     db = mongoose.connect(MongoDBURL, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false }).then(() => {
         logger.log("MongoDB Connected Successfully");
