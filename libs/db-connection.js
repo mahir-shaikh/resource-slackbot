@@ -87,21 +87,21 @@ dbConnection.addNewResource = async function(name, channelId){
     }
 }
 
-dbConnection.removeExistingResource = async function(name, channelId){
+dbConnection.removeExistingResource = async function(name, channelId, removeForcefully = false){
     try{
         let resource = await RESOURCE.findOne({name: name, channelId: channelId})
         if(resource){
-            RESOURCE.findByIdAndDelete(resource._id).then(deletedResource => {
-                if(deletedResource){
-                    // logger.log("removeExistingResource success", deletedResource)
-                    sbConnection.sendMessageToChannel(channelId, `${name} deleted succesfully`)
+            if(resource.isClaimed && !removeForcefully){
+                if(removeForcefully){
+                    // remove resource from DB
+                    removeResource(resource, channelId)
                 }else{
-                    sbConnection.sendMessageToChannel(channelId, `Unable to delete ${name}`)
+                    sbConnection.sendMessageToChannel(channelId, `You cannot remove a resource which is being used(is claimed by someone). \n Please ask <@${resource.owner}> to release ${name} before it can be removed. `)
                 }
-            }).catch((err) => {
-                logger.log("removeExistingResource failure", err)
-                sbConnection.sendMessageToChannel(channelId, `Unable to delete ${name}`)
-            })
+            }else{
+                // remove resource from DB
+                removeResource(resource, channelId)
+            }
         }else{
             sbConnection.sendMessageToChannel(channelId, `No such resource exists: ${name}`)
         }
@@ -219,6 +219,24 @@ dbConnection.getAvailableResources = function(channelId){
     }).catch((e) =>{
         logger.log(e)
     })
+}
+
+function removeResource(resource, channelId){
+    try{
+        RESOURCE.findByIdAndDelete(resource._id).then(deletedResource => {
+            if(deletedResource){
+                // logger.log("removeExistingResource success", deletedResource)
+                sbConnection.sendMessageToChannel(channelId, `${resource.name} deleted succesfully`)
+            }else{
+                sbConnection.sendMessageToChannel(channelId, `Unable to delete ${resource.name}`)
+            }
+        }).catch((err) => {
+            logger.log("removeExistingResource failure", err)
+            sbConnection.sendMessageToChannel(channelId, `Unable to delete ${resource.name}`)
+        })
+    }catch(e){
+        logger.log(e)
+    }
 }
 
 function claimResource(resource, name, duration, claimTime, owner, description, channelId){

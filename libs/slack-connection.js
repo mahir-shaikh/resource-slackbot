@@ -51,7 +51,7 @@ function handleMessage(message, data) {
     let action = message.split('|')[0] ? message.split('|')[0].trim() : null
     let resource_name = message.split('|')[1] ? message.split('|')[1].trim() : null
     let duration = message.split('|')[2] ? message.split('|')[2].trim() : 2 // integer will be in days, defualt 2 days
-    let description = message.split('|')[3] ? message.split('|')[3].trim() : null
+    let description = message.split('|')[3] ? message.split('|')[3].trim() : ''
     let owner = data.user;
     let claimTime = new Date().getTime()
     let channelId = data.channel;
@@ -64,7 +64,13 @@ function handleMessage(message, data) {
             }
         break;
         case 'remove':
-            dbConnection.removeExistingResource(resource_name, channelId)
+            // check if force flag is set
+            let removeForcefully = resource_name.indexOf('--force') > -1;
+            if(removeForcefully){
+                resource_name = resource_name.split('--')[0] ? resource_name.split('--')[0].trim() : null
+            }
+
+            dbConnection.removeExistingResource(resource_name, channelId, removeForcefully)
         break;
         case 'claim':
             let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
