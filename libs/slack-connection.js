@@ -33,7 +33,7 @@ sbConnection.attachListeners = function(){
     
     // Message Handler
     bot.on('message', (data) => {
-        if(data.type !== 'message') {
+        if(data.type !== 'message' || data.subtype == 'channel_join') {
             return;
         }
         //Check if message is directed to Bot // TODO: confirm ID Later, updated as per bot
@@ -115,7 +115,7 @@ function errorText(channelId) {
 
     bot.postMessage(
         channelId,
-        `Oops!!! I do not recognize this command. :notlikethis: \nSee \`<@${botId}> help\` for list of my commands`,
+        `Oops!!! I do not recognize this command. \nSee \`<@${botId}> help\` for list of my commands`,
         params
     );
 }
