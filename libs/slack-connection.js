@@ -49,7 +49,7 @@ sbConnection.attachListeners = function(){
 
 function handleMessage(message, data) {
     let action = message.split('|')[0] ? message.split('|')[0].trim() : null
-    let resource_name = message.split('|')[1] ? message.split('|')[1].trim() : null
+    let resource_name = message.split('|')[1] ? message.split('|')[1].trim().replace(/\*/g,'') : null
     let duration = message.split('|')[2] ? message.split('|')[2].trim() : 2 // integer will be in days, defualt 2 days
     let description = message.split('|')[3] ? message.split('|')[3].trim() : ''
     let owner = data.user;
