@@ -67,7 +67,7 @@ dbConnection.addNewResource = async function(name, channelId){
     try {
         let resource = await RESOURCE.findOne({name: name, channelId: channelId})
         if(resource){
-            sbConnection.sendMessageToChannel(channelId, 'Resource already exits')
+            sbConnection.sendMessageToChannel(channelId, `*${name}* already exists in the database!!! :facepalm:`)
             return;
         }
 
@@ -76,10 +76,10 @@ dbConnection.addNewResource = async function(name, channelId){
             channelId: channelId
         })
         newresource.save().then((info) => {
-            sbConnection.sendMessageToChannel(channelId, 'Resource added to DB')
+            sbConnection.sendMessageToChannel(channelId, `*${name}* added to the database :aaw_yeah:`)
         }).catch((err) => {
             logger.log("addNewResource failure"+ err)
-            sbConnection.sendMessageToChannel(channelId, 'Something went wrong. Resource not added in DB')
+            sbConnection.sendMessageToChannel(channelId, `Something went wrong. *${name}* was not added in the database :confused_dog:`)
         })        
     } catch (err) {
         logger.log("addNewResource:"+err)
@@ -95,14 +95,14 @@ dbConnection.removeExistingResource = async function(name, channelId, removeForc
                     // remove resource from DB
                     removeResource(resource, channelId)
                 }else{
-                    sbConnection.sendMessageToChannel(channelId, `You cannot remove a resource which is being used (is claimed by someone). \n Please ask <@${resource.owner}> to release ${name} before it can be removed. `)
+                    sbConnection.sendMessageToChannel(channelId, `You cannot remove a resource which is being used (is claimed by someone). :think-about-it: \n Please ask <@${resource.owner}> to release *${name}* in order to proceed.`)
                 }
             }else{
                 // remove resource from DB
                 removeResource(resource, channelId)
             }
         }else{
-            sbConnection.sendMessageToChannel(channelId, `No such resource exists: ${name}`)
+            sbConnection.sendMessageToChannel(channelId, `No such resource exists: *${name}* :wtf:`)
         }
     }catch(e){
 
@@ -133,14 +133,14 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
                     // already being used by xyz till time...
                     // let time = parseInt(new Date(resource.claimTime + resource.duration)/1000)
                     let time = resource.claimTime + resource.duration
-                    sbConnection.sendMessageToChannel(channelId, `Cannot Claim the resource ${name} as it is already being used by <@${resource.owner}> till ${getTime(time)}`)
+                    sbConnection.sendMessageToChannel(channelId, `Cannot claim the resource *${name}* as it is already being used by <@${resource.owner}> till ${getSlackTimeString(time)} :let_me:in:`)
                 }
             }else{
                 // claim the resource
                 claimResource(resource, name, duration, claimTime, owner, description, channelId)
             }
         }else{
-            sbConnection.sendMessageToChannel(channelId, `No such resource exists: ${name}`)
+            sbConnection.sendMessageToChannel(channelId, `No such resource exists: *${name}* :kekw:`)
         }
     }catch(e){
         logger.log(e)
@@ -168,13 +168,13 @@ dbConnection.release = async function(name, owner, channelId){
                 if(resource.owner == owner){
                     releaseResource(resource, channelId)
                 }else{
-                    sbConnection.sendMessageToChannel(channelId, `You cannot release the resource ${name} as it is  was not claimed by you. Please ask <@${resource.owner}> to release`)
+                    sbConnection.sendMessageToChannel(channelId, `You cannot release *${name}* as it was not claimed by you. :excuseme: \n Please ask <@${resource.owner}> to release`)
                 }
             }else{
-                sbConnection.sendMessageToChannel(channelId, `No need to release as the resource. ${name} is already free`)
+                sbConnection.sendMessageToChannel(channelId, `No need to release as *${name}* is already available :facepalm:`)
             }
         }else{
-            sbConnection.sendMessageToChannel(channelId, `No such resource exists: ${name}`)
+            sbConnection.sendMessageToChannel(channelId, `No such resource exists: *${name}* :dumb:`)
         }
     }catch(e){
         logger.log(e)
@@ -192,8 +192,8 @@ dbConnection.getAllResources = function(channelId){
             if(element.isClaimed){
                 finalString += ' *Claimed By:* <@'+ element.owner + '>'
                 finalString += ' - '+ '_' + element.message + '_'
-                finalString += ' *Claimed on:* ' + getTime(element.claimTime)//Need to format it as DD MM YYYY
-                finalString += ' *Claimed till:* ' + getTime(element.claimTime + element.duration)//Need to format it as DD MM YYYY
+                finalString += ' *Claimed on:* ' + getSlackTimeString(element.claimTime)//Need to format it as DD MM YYYY
+                finalString += ' *Claimed till:* ' + getSlackTimeString(element.claimTime + element.duration)//Need to format it as DD MM YYYY
                 // finalString += ' *Claimed on:* ' + '<!date^'+parseInt(element.claimTime/1000)+'^{date}|Date not available :person_frowning:>'//Need to format it as DD MM YYYY
                 // finalString += ' *Claimed till:* ' + '<!date^'+parseInt((element.claimTime + element.duration)/1000)+'^{date}|Date not available :person_frowning:>' //Need to format it as DD MM YYYY
             }
@@ -202,7 +202,7 @@ dbConnection.getAllResources = function(channelId){
         }
 
         if(!finalString){
-            finalString = "No resources present. \nPlease add using the add command. \nRun help for all commands."
+            finalString = "No resources present in the database. :computerrage: \nPlease create new resource using the \`add\` command. \nRun \`help\` to get a list of all the commands."
         }
         sbConnection.sendMessageToChannel(channelId, finalString)
     }).catch((e) =>{
@@ -217,7 +217,11 @@ dbConnection.getAvailableResources = function(channelId){
             return '• ' + element.name
         }).sort()
 
-        sbConnection.sendMessageToChannel(channelId, '```'+simplefiedArray.join('\n')+'```')
+        if(simplefiedArray.length){
+            sbConnection.sendMessageToChannel(channelId, 'Please find available resources below: \n'+simplefiedArray.join('\n'))
+        }else{
+            sbConnection.sendMessageToChannel(channelId, `No resources are available. :panik:`)
+        }
     }).catch((e) =>{
         logger.log(e)
     })
@@ -228,13 +232,13 @@ function removeResource(resource, channelId){
         RESOURCE.findByIdAndDelete(resource._id).then(deletedResource => {
             if(deletedResource){
                 // logger.log("removeExistingResource success", deletedResource)
-                sbConnection.sendMessageToChannel(channelId, `${resource.name} deleted succesfully`)
+                sbConnection.sendMessageToChannel(channelId, `*${resource.name}* deleted succesfully :success:`)
             }else{
-                sbConnection.sendMessageToChannel(channelId, `Unable to delete ${resource.name}`)
+                sbConnection.sendMessageToChannel(channelId, `Unable to delete *${resource.name}* :ahhhhhhhhh:`)
             }
         }).catch((err) => {
             logger.log("removeExistingResource failure", err)
-            sbConnection.sendMessageToChannel(channelId, `Unable to delete ${resource.name}`)
+            sbConnection.sendMessageToChannel(channelId, `Unable to delete *${resource.name}* :awkward_monkey_look:`)
         })
     }catch(e){
         logger.log(e)
@@ -250,9 +254,9 @@ function claimResource(resource, name, duration, claimTime, owner, description, 
             duration: duration,
             isClaimed: true
         }).then((updatedDocument)=>{
-            sbConnection.sendMessageToChannel(channelId, `*${name}* has been claimed successfully by <@${owner}>`)
+            sbConnection.sendMessageToChannel(channelId, `*${name}* has been claimed successfully by <@${owner}> :catjam:`)
         }).catch((e)=>{
-            sbConnection.sendMessageToChannel(channelId, `Some error occured while claiming ${name}`)
+            sbConnection.sendMessageToChannel(channelId, `Some error occured while claiming *${name}* :among_us_report:`)
         })
         
     }catch(e){
@@ -269,9 +273,9 @@ function releaseResource(resource, channelId){
             duration: null,
             isClaimed: false
         }).then((updatedDocument)=>{
-            sbConnection.sendMessageToChannel(channelId, `${updatedDocument.name} has been released successfully by <@${resource.owner}>`)
+            sbConnection.sendMessageToChannel(channelId, `*${updatedDocument.name}* has been released successfully by <@${resource.owner}> :among_us_orange_dance:`)
         }).catch((e)=>{
-            sbConnection.sendMessageToChannel(channelId, `Some error occured while releasing ${resource.name}`)
+            sbConnection.sendMessageToChannel(channelId, `Some error occured while releasing ${resource.name} :among_us_report:`)
         })
         
     }catch(e){
@@ -280,21 +284,27 @@ function releaseResource(resource, channelId){
 
 }
 
-function getTime(time){
-    //time will be in miliseconds
-    let fullDate = new Date(time)
+// function getTime(time){
+//     //time will be in miliseconds
+//     let fullDate = new Date(time)
 
-    let year = fullDate.getFullYear()
-    let month = fullDate.getMonth();
-    let date = fullDate.getDate()
+//     let year = fullDate.getFullYear()
+//     let month = fullDate.getMonth();
+//     let date = fullDate.getDate()
 
-    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+//     let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 
-    let hour = fullDate.getHours()
-    let minutes = fullDate.getMinutes()
+//     let hour = fullDate.getHours()
+//     let minutes = fullDate.getMinutes()
 
-    return `${date} ${months[month]}, ${year}- ${hour}:${minutes}`
+//     return `${date} ${months[month]}, ${year}- ${hour}:${minutes}`
+// }
+
+function getSlackTimeString(time){
+    // time in milliseconds
+    time = Math.floor(time/1000);
+    return `<!date^${time}^{date_num} at {time}|->`
 }
 
 dbConnection.addMultipleResource =  async function(body, channelId) {
@@ -323,11 +333,11 @@ dbConnection.addMultipleResource =  async function(body, channelId) {
     RESOURCE.insertMany(body).then(function(){
             let message = '';
             if(allResources.length){
-                message += '*' + allResources.join(",") + '* already exists in DB and were not re-added \n'
+                message += '*' + allResources.join(",") + '* already exists in the database and were not re-added. \n'
             }
             minifiedBody = body.map((item)=> item.name)
             if(minifiedBody){
-                message += '*' + minifiedBody.join(",") + '* were successfully added in DB \n'
+                message += '*' + minifiedBody.join(",") + '* were successfully added in the database :cool-doge:\n'
             }
             sbConnection.sendMessageToChannel(channelId, message)
             logger.log("Data inserted")  // Success

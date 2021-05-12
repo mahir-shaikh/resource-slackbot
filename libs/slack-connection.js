@@ -103,8 +103,7 @@ function runHelp(channelId) {
 
     bot.postMessage(
         channelId,
-        `You can use me by typing \`<@${botId}> <command>\`.\nPlease find all the possible commands below:\n• *list*: List all the resources\n• *list available*:  List all resources which are currently available\n• *add|<name>*: Add a resource with name <name>\n• *add|<name>,<name>,<name>,...*: Add multiple resources at a time\n• *remove|<name>*: Remove the resource with name <name>\n• *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description\n• *release|<name>*: Release your claim on resource with name <name>
-        `,
+        `:question: You can use me by typing \`<@${botId}> <command>\`.\nPlease find all the possible commands below:\n• *list*: List all the resources\n• *list available*:  List all resources which are currently available\n• *add|<name>*: Add a resource with name <name>\n• *add|<name>,<name>,<name>,...*: Add multiple resources at a time\n• *remove|<name>*: Remove the resource with name <name>\n• *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description\n• *release|<name>*: Release your claim on resource with name <name>`,
         params
     );
 }
@@ -116,7 +115,7 @@ function errorText(channelId) {
 
     bot.postMessage(
         channelId,
-        `:question: Oops!!! I do not recognize this command. See \`<@${botId}> help\` for list of my commands`,
+        `Oops!!! I do not recognize this command. :notlikethis: \nSee \`<@${botId}> help\` for list of my commands`,
         params
     );
 }
