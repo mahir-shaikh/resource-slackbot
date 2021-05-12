@@ -12,7 +12,7 @@ const CronJob = require('cron').CronJob;
 
 dbConnection.startCron = function() {
     var job = new CronJob(
-    '0 */360 * * * *', //Run every 6 hours
+    '0 */60 * * * *', //Run every hour
     function(){
         onCronTick()
     }, null, true, 'America/Los_Angeles');
@@ -131,8 +131,9 @@ dbConnection.claim = async function(name, duration, claimTime, owner, descriptio
                     claimResource(resource, name, duration, claimTime, owner, description, channelId)
                 }else{
                     // already being used by xyz till time...
-                    let time = parseInt(new Date(resource.claimTime + resource.duration)/1000)
-                    sbConnection.sendMessageToChannel(channelId, `Cannot Claim the resource ${name} as it is already being used by <@${resource.owner}> till <!date^${time}^{date}|Date not available :person_frowning:>`)
+                    // let time = parseInt(new Date(resource.claimTime + resource.duration)/1000)
+                    let time = resource.claimTime + resource.duration
+                    sbConnection.sendMessageToChannel(channelId, `Cannot Claim the resource ${name} as it is already being used by <@${resource.owner}> till ${getTime(time)}`)
                 }
             }else{
                 // claim the resource
@@ -191,8 +192,10 @@ dbConnection.getAllResources = function(channelId){
             if(element.isClaimed){
                 finalString += ' *Claimed By:* <@'+ element.owner + '>'
                 finalString += ' - '+ '_' + element.message + '_'
-                finalString += ' *Claimed on:* ' + '<!date^'+parseInt(element.claimTime/1000)+'^{date}|Date not available :person_frowning:>'//Need to format it as DD MM YYYY
-                finalString += ' *Claimed till:* ' + '<!date^'+parseInt((element.claimTime + element.duration)/1000)+'^{date}|Date not available :person_frowning:>' //Need to format it as DD MM YYYY
+                finalString += ' *Claimed on:* ' + getTime(element.claimTime)//Need to format it as DD MM YYYY
+                finalString += ' *Claimed till:* ' + getTime(element.claimTime + element.duration)//Need to format it as DD MM YYYY
+                // finalString += ' *Claimed on:* ' + '<!date^'+parseInt(element.claimTime/1000)+'^{date}|Date not available :person_frowning:>'//Need to format it as DD MM YYYY
+                // finalString += ' *Claimed till:* ' + '<!date^'+parseInt((element.claimTime + element.duration)/1000)+'^{date}|Date not available :person_frowning:>' //Need to format it as DD MM YYYY
             }
             
             finalString += '\n'
@@ -277,7 +280,24 @@ function releaseResource(resource, channelId){
 
 }
 
-dbConnection.addMultipleResource =  async function(body, channelId) { 
+function getTime(time){
+    //time will be in miliseconds
+    let fullDate = new Date(time)
+
+    let year = fullDate.getFullYear()
+    let month = fullDate.getMonth();
+    let date = fullDate.getDate()
+
+    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+    let hour = fullDate.getHours()
+    let minutes = fullDate.getMinutes()
+
+    return `${date} ${months[month]}, ${year}- ${hour}:${minutes}`
+}
+
+dbConnection.addMultipleResource =  async function(body, channelId) {
     let allResources = await RESOURCE.find({'name' : {$in : body}, channelId : channelId})
     if(allResources.length){
         allResources = allResources.map((resource)=>{
@@ -288,7 +308,11 @@ dbConnection.addMultipleResource =  async function(body, channelId) {
             return !allResources.includes(item)
         })
     }
-
+    // Filter out duplicate values
+    body = body.filter((elem, index, array)=>{
+        return array.indexOf(elem) === index;
+    })
+    // Create required format to push in Mongo 
     body = body.map((obj)=>{
         return {
             name: obj,

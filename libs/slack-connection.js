@@ -73,7 +73,7 @@ function handleMessage(message, data) {
             dbConnection.removeExistingResource(resource_name, channelId, removeForcefully)
         break;
         case 'claim':
-            let durationInMilliSeconds = parseInt(duration)*24*60*60*1000;
+            let durationInMilliSeconds = Number(duration)*24*60*60*1000;
             // let durationInMilliSeconds = parseInt(duration)*60*1000; // Store as minute for testing purpose
             dbConnection.claim(resource_name, durationInMilliSeconds, claimTime, owner, description, channelId)
         break;
