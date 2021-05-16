@@ -33,6 +33,10 @@ sbConnection.attachListeners = function(){
     
     // Message Handler
     bot.on('message', (data) => {
+        if(data.type == 'channel_deleted'){
+            let channelId = data.channel
+            dbConnection.deleteResourceBelongingChannel(channelId)
+        }
         if(data.type !== 'message' || data.subtype == 'channel_join') {
             return;
         }

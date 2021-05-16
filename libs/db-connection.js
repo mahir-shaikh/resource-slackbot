@@ -8,59 +8,9 @@ var RESOURCE = require('../models/ResourceModel')
 const sbConnection = require('./slack-connection.js')
 const logger = require('./logger')
 
-const CronJob = require('cron').CronJob;
-
-dbConnection.startCron = function() {
-    var job = new CronJob(
-    '0 */60 * * * *', //Run every hour
-    function(){
-        onCronTick()
-    }, null, true, 'America/Los_Angeles');
-    job.start();
-}
-
-async function onCronTick() {
-    try {
-        let allResources = await RESOURCE.find({isClaimed : true});
-        let expiredResource = [];
-        let currentTime = new Date().getTime();
-        for (let i = 0; i < allResources.length; i++) {
-            let bucket = allResources[i];
-            let totalTime = bucket.claimTime + bucket.duration;
-            if(currentTime >= totalTime) {
-                expiredResource.push(mongoose.Types.ObjectId(bucket._id));
-            }
-        }
-        if(expiredResource.length) {
-            releaseAll(expiredResource);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-}
-async function releaseAll(expiredResource) {
-    try {
-        let allResources = await RESOURCE.updateMany({'_id' : {$in : expiredResource}}, {
-            owner: null,
-            message: null,
-            claimTime: null,
-            duration: null,
-            isClaimed: false
-        });
-        logger.log('all expired resources are availabel now');
-    } catch (error) {
-        logger.log(error);
-    }
-}
-
 dbConnection.connect = function(){
     //Mongoose connection
-    db = mongoose.connect(MongoDBURL, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false }).then(() => {
-        logger.log("MongoDB Connected Successfully");
-    }).catch((err) => {
-        logger.log("MongoDB Connecttion failed:", err);
-    })
+    return mongoose.connect(MongoDBURL, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false })
 }
 
 dbConnection.addNewResource = async function(name, channelId){
@@ -252,7 +202,8 @@ function claimResource(resource, name, duration, claimTime, owner, description, 
             message: description,
             claimTime: claimTime,
             duration: duration,
-            isClaimed: true
+            isClaimed: true,
+            notificationSent: false
         }).then((updatedDocument)=>{
             sbConnection.sendMessageToChannel(channelId, `*${name}* has been claimed successfully by <@${owner}>`)
         }).catch((e)=>{
@@ -271,7 +222,8 @@ function releaseResource(resource, channelId){
             message: null,
             claimTime: null,
             duration: null,
-            isClaimed: false
+            isClaimed: false,
+            notificationSent: false
         }).then((updatedDocument)=>{
             sbConnection.sendMessageToChannel(channelId, `*${updatedDocument.name}* has been released successfully by <@${resource.owner}>`)
         }).catch((e)=>{
@@ -336,7 +288,7 @@ dbConnection.addMultipleResource =  async function(body, channelId) {
                 message += '*' + allResources.join(",") + '* already exists in the database and were not re-added. \n'
             }
             minifiedBody = body.map((item)=> item.name)
-            if(minifiedBody){
+            if(minifiedBody.length){
                 message += '*' + minifiedBody.join(",") + '* were successfully added in the database\n'
             }
             sbConnection.sendMessageToChannel(channelId, message)
@@ -344,4 +296,12 @@ dbConnection.addMultipleResource =  async function(body, channelId) {
         }).catch(function(error){
             logger.log(error)      // Failure
         });
+}
+
+dbConnection.deleteResourceBelongingChannel = function(channelId){
+    RESOURCE.deleteMany({channelId: channelId}).then((deletedResources)=>{
+        logger.log(JSON.stringify(deletedResources) + "removed as the channel does not exists anymore")
+    }).catch((e) =>{
+        logger.log(e)
+    })
 }
