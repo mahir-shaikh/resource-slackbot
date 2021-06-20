@@ -1,5 +1,5 @@
-logger = {}
-logger.log = function (message){
-    console.log(message)
+var logger = {}
+logger.log = function (...args){
+    console.log(args.join(' '))
 }
 module.exports = logger

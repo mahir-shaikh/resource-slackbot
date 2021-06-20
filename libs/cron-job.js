@@ -1,12 +1,12 @@
 
-cronJob = {}
+var cronJob = {}
 module.exports = cronJob
 
 const mongoose = require('mongoose');
-const MongoDBURL = process.env.MongoURL;
-var RESOURCE = require('../models/ResourceModel')
+const dbConnect = require('./db-connect')
 
-const sbConnection = require('./slack-connection.js')
+const commonController = require('../controllers/common-controller')
+const modalViews = require('../models/slackmodal-views')
 const logger = require('./logger')
 
 
@@ -29,7 +29,7 @@ cronJob.startCron = function() {
 async function onCronTick() {
     try {
         logger.log("Cron Job running at: " + new Date())
-        let allResources = await RESOURCE.find({isClaimed : true});
+        let allResources = await dbConnect.findMany({isClaimed : true});
         let expiredResource = [];
         let aboutToExpireResource = [];
         let bufferTime = 24*60*60*1000; //24 hours
@@ -54,16 +54,18 @@ async function onCronTick() {
         }
 
         if(aboutToExpireResource.length) {
-            sendNotification(aboutToExpireResource);
+          // sendPrivateNotification(aboutToExpireResource)
+          sendNotification(aboutToExpireResource);
         }
     } catch (error) {
         console.log(error);
     }
 
 }
+
 async function releaseAll(expiredResource) {
     try {
-        let allResources = await RESOURCE.updateMany({'_id' : {$in : expiredResource}}, {
+        let allResources = await dbConnect.updateMany({'_id' : {$in : expiredResource}}, {
             owner: null,
             message: null,
             claimTime: null,
@@ -78,22 +80,53 @@ async function releaseAll(expiredResource) {
 }
 
 function sendNotification(arrayOfNotifications){
-    console.log(arrayOfNotifications)
     let arrayOfId = []
     for (let i = 0; i < arrayOfNotifications.length; i++) {
         const element = arrayOfNotifications[i];
         arrayOfId.push(element.id)
 
         let message = `<@${element.owner}> - Your claim on *${element.name}* is about to expire. If you are still not done, you can claim it again to extend the duration`
-        sbConnection.sendMessageToChannel(element.channelId, message)
+        commonController.sendMessageToChannel(element.channelId, message)
+        sendPrivateNotificationWithAttachment(element)
     }
 
     // Update DB so that we do not send the notification again in next cron job
-    RESOURCE.updateMany({'_id' : {$in : arrayOfId}}, {
-        notificationSent: true
-    }).then(()=>{
+    dbConnect.updateMany({'_id' : {$in : arrayOfId}}, { notificationSent: true }).then(()=>{
         logger.log('Notifications sent updated in DB');
     }).catch((error)=>{
         logger.log(error);
     })
+}
+
+// function sendPrivateNotification(arrayOfNotifications){
+//     console.log(arrayOfNotifications)
+//     let arrayOfId = []
+//     for (let i = 0; i < arrayOfNotifications.length; i++) {
+//         const element = arrayOfNotifications[i];
+//         arrayOfId.push(element.id)
+
+//         let message = `<@${element.owner}> - Your claim on *${element.name}* is about to expire. If you are still not done, you can claim it again to extend the duration`
+//         commonController.sendEphemeralMessageToChannel({channelId: element.channelId, text: message, userId: element.owner }).then(()=>{
+//           // Update DB so that we do not send the notification again in next cron job
+//           dbConnect.updateResource(element.id, {
+//               notificationSent: true
+//           }).then(()=>{
+//               logger.log('Notifications sent updated in DB');
+//           }).catch((error)=>{
+//               logger.log(error);
+//           })
+//         }).catch((err)=>{
+//           console.log(err)
+//         })
+//     }
+// }
+
+function sendPrivateNotificationWithAttachment(element){
+  let message = modalViews.attachments(element.name)
+  
+  commonController.sendEphemeralMessageToChannel({channelId: element.channelId, viewObject: message, userId: element.owner }).then(()=>{
+
+  }).catch((err)=>{
+    logger.log("INSIDE CATCH: ", JSON.stringify(err))
+  })
 }
