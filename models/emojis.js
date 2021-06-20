@@ -1,18 +1,18 @@
 var emojis = {
-    panik: "../assets/responses/panik.jpg",
-    kekw: "../assets/responses/kekw.gif",
-    letmein: "../assets/responses/letmein.gif",
-    catjam: "../assets/responses/catjam.gif",
-    ohno: "../assets/responses/ohno.gif",
-    wtf: "../assets/responses/wtf.gif",
-    thinkaboutit: "../assets/responses/thinkaboutit.gif",
-    ahhhhh: "../assets/responses/ahhhhh.gif",
-    success: "../assets/responses/success.jpg",
-    facepalm: "../assets/responses/facepalm.gif",
-    trumpdance: "../assets/responses/trumpdance.gif",
-    excuseme: "../assets/responses/excuseme.gif",
-    confuseddog: "../assets/responses/confuseddog.gif",
-    awwyeah: "../assets/responses/awwyeah.gif",
-    welcome: "../assets/responses/welcome.gif"
+    panik: "https://lh3.googleusercontent.com/fMgqbi-FJuxTvAdAKS29QLulIYp0n0NMfsOGJYBNhUwEiZLtikxJXHWKw5yii-22Py5JuvIj4TAscqZZ6VRg8qWF6LtWjApbAsTGYrSktyiuS8wzyfzoLGMpl_Hz9PICLRGo_EVm=w2400", //"../assets/responses/panik.jpg",
+    kekw: "https://lh3.googleusercontent.com/5HNDkZJEfHECmABk9X3gM1TD9gQZhzlIKnfW3AcJPdiys2_aO7BkbkcOdEnZys1FT4TFAv904SvrHWG1dR-keQYoE8h6LVSfT0ZK2LM57_M9IRCiVdLjx9N1wPTk-fm8GSEQw1Nl=w2400", //"../assets/responses/kekw.gif",
+    letmein: "https://lh3.googleusercontent.com/weJjyqOlx8s-OetkDX0iAE0_QC6tBCZj5_ITaocZYkPbGfTjzKEU6B_0mfxNEQkLEu_a80dTNJBoqeGGjY2y__2THBoa8G7EluYdgWCLcGieNZZV9lIiwpuAfA816hAHMH_TGuNU=w2400", // "../assets/responses/letmein.gif",
+    catjam: "https://lh3.googleusercontent.com/t5n0JiSaPRpSaNht_SKlggY42OrzzjQ0qUaflwDNxv-fW2ZSVJWi3bvywLnNvNP5FwFs4DDjK4lkpKCIyytoJPmDbM9aToGFdvGwPoUUqe2qw5pY_nxl6gPsj3P10EMbefTFtiyU=w2400", // "../assets/responses/catjam.gif",
+    ohno: "https://lh3.googleusercontent.com/CCE03Nvf2vBonllghvG9nUWiiDLgZoPXgnpqeccPUT8JvwPbwu-xzuGu9BmUt9aGm4ABwezEMpC5QYf7NWgZIyryUQni1JcDHZp_mSpH_a2GSCJclkPOBWe3FxOQKfWVSG_oWwSw=w2400", // "../assets/responses/ohno.gif",
+    wtf: "https://lh3.googleusercontent.com/lXM26UKKRx0d-chEDDkgjkJMhwQ17qPGR9V6WUg_mWj6vhjYmCPO5eMxZ8IfxKqMAQtyy91NwQ_5TmECL8oMXVPpBWABtMJMG_zWRa4wIT_AUSBHaKJ2LvwM6cTIsnhlpmYqx5Fo=w2400", // "../assets/responses/wtf.gif",
+    thinkaboutit: "https://lh3.googleusercontent.com/hrTvXJJJgiaz9BTC69zgmr1C9H53c5L5msvWqTwl8YX-8kkFbo0zKfSEToJRcLMCUr3Us3XKrMac8XxXHxA8fqYVBeZuU9xzw5IElCEIQZNJAvKtnl9A6AqbZohKiO25Ki27bcl9=w2400", //"../assets/responses/thinkaboutit.gif",
+    ahhhhh: "https://lh3.googleusercontent.com/UGWvtE_mQpz1AEptkSf368f06Y5xS75kuPgqCq8dNOHc4xWnk7o9LEC_lcRdN0vjVO8lkBhHjL1zrC8bwZe41bhOn1u7cISKDGwLhd8S9I-Hj6PMcz-WKw3DNg93JqXrKz61dE1T=w2400", // "../assets/responses/ahhhhh.gif",
+    success: "https://lh3.googleusercontent.com/nrbB4WJhHqM-rE5d_51TEohtAtlmNqcwLfZpo4yv1mzFMWkrLqfLJadf4kfrDLyacNnIHNzU6IXr9OKGu88bojFh_SV1sR97UmFuLMOfkVbTWASJDQd5nTSuxaXj9WMeTwGrX3d3=w2400", // "../assets/responses/success.jpg",
+    facepalm: "https://lh3.googleusercontent.com/_mN2y2IX7nNDTSS9Alt2Tj3eV5LB-Y3XAX94p85yXZTl0K6Bm64qGd6Sak9Ax3YYQYXr9t2nDuyWvtrT4uoaiqlHrWTcPJfzMy8B7waZxxe6degOn1td98MF2NhntMb116f-YnPy=w2400", // "../assets/responses/facepalm.gif",
+    trumpdance: "https://lh3.googleusercontent.com/fp40Ie3FiyRUk9NEqtBSrV0OByHDeSZ3rfaGDOjrGcQbZvN4_BSRgkIAXva5PWkaelk3XIXiRYhAyzHcxxFX5wxkCMJEIucv8AoxPi8QXzOyZG9H9pCRnkrRmZr3eQt3MgKDrCIq=s220-p-k", // "../assets/responses/trumpdance.gif",
+    excuseme: "https://lh3.googleusercontent.com/9CQ6XVSew_t5JiPMSSSw_JJpZDb77pq1iIGkztYAfyHAzGXnA5amR9NdrcE6pJs_RvcKsISE0T72X29Lm63y1Ml0bZaJcJyFpyKmjGurjJxLKZ3EtPC5aYS1BK1e260feJUbDpHb=w2400", //"../assets/responses/excuseme.gif",
+    confuseddog: "https://lh3.googleusercontent.com/oN4NASd2ixcFsF2-0LjgPNTRIP_dDEeXGX4KE7Ju-6iQ2xsIc9gkyqNxp-WtRCb3LgMETUjDBQ-GAFFUBW-wC6vJVaMJX5gVJRPxG4Z38GQDd7WJ3khkzwTir4eT4w-gQj6N-Wvz=s220-p-k", // "../assets/responses/confuseddog.gif",
+    awwyeah: "https://lh3.googleusercontent.com/1GSsTqUyNdQo3SHR4tkJp2th792mRpDqT_b-f_ZrzgMek9A_D4PdYMpakCJnCOk6FoAU30ApdUJttCTCQrKuse1VuAXIq8GqscnUQMSSe47TqaCJ4jyz2zMCjvn531go3N1GmctQ=w2400", // "../assets/responses/awwyeah.gif",
+    welcome: "https://lh3.googleusercontent.com/02-IBTRLpStPJBfkA8pv_FkV6dw1xwJ9nB9qdsjy_0gZJ6tRhjtrrHEa-yxU5x_1iw2PCPm88F8qvy3dm_8kqS7Y9oCpSjcEpjFxw4yJpnFgWrxYNidXbhVcGkRTW5-1aLsffwBy=w2400" // "../assets/responses/welcome.gif"
 };
 module.exports = emojis;

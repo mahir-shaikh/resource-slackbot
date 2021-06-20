@@ -447,16 +447,6 @@ commonController.welcomeUser =function ({channelId, userId, botId}){
     • *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
     • *release|<name>*: Release your claim on resource with name <name>
     
-    :question: You can also use me by typing \`/<command>\`.
-    Please find all the possible commands below:
-    • */list*: List all the resources
-    • */list-available*:  List all resources which are currently available
-    • */add <name>*: Add a resource with name <name>
-    • */add <name>,<name>,<name>,...*: Add multiple resources at a time
-    • */remove <name>*: Remove the resource with name <name>
-    • */claim <name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
-    • */release <name>*: Release your claim on resource with name <name> 
-    
     I also provide dialog box functionality. You can use that using \`/resourcebot\`
   `
   let image = emojis.welcome
@@ -475,3 +465,30 @@ commonController.httpGet = function(url,token, cb){
     cb(body)
   });
 }
+
+
+//   let text = `
+//     Hello <@${userId}>!!!\nWelcome to the Channel. I am Resource Bot which helps you keep a track of resources.
+    
+//     :question: You can use me by typing \`<@${botId}> <command>\`.
+//     Please find all the possible commands below:
+//     • *list*: List all the resources
+//     • *list available*:  List all resources which are currently available
+//     • *add|<name>*: Add a resource with name <name>
+//     • *add|<name>,<name>,<name>,...*: Add multiple resources at a time
+//     • *remove|<name>*: Remove the resource with name <name>
+//     • *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
+//     • *release|<name>*: Release your claim on resource with name <name>
+    
+//     :question: You can also use me by typing \`/<command>\`.
+//     Please find all the possible commands below:
+//     • */list*: List all the resources
+//     • */list-available*:  List all resources which are currently available
+//     • */add <name>*: Add a resource with name <name>
+//     • */add <name>,<name>,<name>,...*: Add multiple resources at a time
+//     • */remove <name>*: Remove the resource with name <name>
+//     • */claim <name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
+//     • */release <name>*: Release your claim on resource with name <name> 
+    
+//     I also provide dialog box functionality. You can use that using \`/resourcebot\`
+//   `
