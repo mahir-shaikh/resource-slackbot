@@ -12,7 +12,7 @@ smlConnection.attachModalCommand = function() {
   // Listen for a slash command invocation
   bot = sbConnection.bot
   // bot.command("/resourcebot", async (obj) => {
-  bot.command("/resourcebot", async ({ command, ack, body, client }) => {
+  bot.command("/appdemousagebot", async ({ command, ack, body, client }) => {
     // Acknowledge the command request
     await ack();
     console.log(JSON.stringify(command))
