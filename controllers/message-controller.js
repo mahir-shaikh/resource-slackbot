@@ -17,6 +17,7 @@ function initialize(id) {
 messageController.initialize = initialize
 
 messageController.handleMessage = function(message, data, botId) {
+  // console.log('inside handleMessage', message, data, botId)
   if(bot == undefined){
     initialize()
   }
@@ -54,12 +55,14 @@ messageController.handleMessage = function(message, data, botId) {
       releseResource({name: resource_name, owner, channelId});
       break;
     case "list":
+      console.log('about to handle list message')
       getAllResources({channelId});
       break;
     case "list available":
       getAvailableResources({channelId});
       break;
     case "help":
+      console.log('about to handle help message')
       runHelp(channelId,false, botId);
       break;
     default:
