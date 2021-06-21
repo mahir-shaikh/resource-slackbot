@@ -110,8 +110,6 @@ async function sendEphemeralMessageToChannel( {channelId, text, image, userId, v
       // You could also use a blocks[] array to send richer content
     }
     
-    console.log(JSON.stringify(finalObject))
-    
    return bot.client.chat.postEphemeral(finalObject);
   } catch (error) {
     logger.log(error);
@@ -168,7 +166,6 @@ commonController.claimResource = async function({name, duration, claimTime, owne
       if (resource) {
         if (resource.isClaimed) {
           if (resource.owner == owner) {
-            console.log('before calling claim')
             return claim( {resource, name, duration, claimTime, owner, message, channelId }).then((obj)=>{
               resolve(obj)
             }).catch((obj)=>{
@@ -184,7 +181,6 @@ commonController.claimResource = async function({name, duration, claimTime, owne
           }
         } else {
           // claim the resource
-          console.log('before calling claim')
           return claim( {resource, name, duration, claimTime, owner, message, channelId }).then((obj)=>{
             resolve(obj)
           }).catch((obj)=>{
@@ -207,12 +203,10 @@ function claim({resource, name, duration, claimTime, owner, message, channelId})
       dbConnect.updateResource(resource._id, {owner, message, claimTime, duration, isClaimed: true, notificationSent: false }).then(updatedDocument => {
           let msg = `*${name}* has been claimed successfully by <@${owner}>`;
           let image = emojis.catjam;
-          console.log('inside then of dbConnect.updateResource')
           resolve({ msg, image });
         }).catch(e => {
           let msg = `Some error occured while claiming *${name}*`;
           let image = emojis.ohno;
-          console.log('inside then of dbConnect.updateResource')
           reject({ msg, image });
         });
     } catch (e) {
@@ -423,7 +417,7 @@ commonController.getSlackTimeString = getSlackTimeString
 
 
 commonController.deleteAllResourcesBelongingToChannel = function(channelId) {
-  console.log('commonController.deleteAllResourcesBelongingToChannel')
+  logger.log('commonController.deleteAllResourcesBelongingToChannel')
   dbConnect.deleteAllResourceBelongingToChannel( channelId )
     .then(deletedResources => {
       logger.log(JSON.stringify(deletedResources), "removed as the channel does not exists anymore");

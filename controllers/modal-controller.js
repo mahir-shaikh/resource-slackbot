@@ -124,7 +124,6 @@ modalController.onAddModalSubmit = async ({client, view, body }) => {
   let channelId = view.private_metadata;
   let owner = body.user.id
   
-  console.log(JSON.stringify(view))
   if(Object.keys(view.state.values).length > 1){
     //Multiple Resource
     let data = view.state.values;
@@ -176,11 +175,9 @@ modalController.onClaimModalSubmit = async ({client, view, body }) => {
   duration = Number(duration) * 24 * 60 * 60 * 1000; // converting into milliseconds
   
   commonController.claimResource({name, duration, claimTime, owner, message, channelId}).then(({msg, image})=>{
-    console.log('inside then of commonController.claimResource')
     commonController.sendMessageToChannel(channelId, msg, image);
     openModal(client, body, channelId, msg, image)
   }).catch(({msg, image})=>{
-    console.log('inside catch of commonController.claimResource')
     openModal(client, body, channelId, msg, image)
   })  
 }
@@ -249,7 +246,6 @@ modalController.openClaimModal = ({client, body, initialOption, channelId, owner
 }
 
 async function openModal(client, body, channelId, message = null, image = null, viewObject) {
-  console.log('openModal', viewObject)
   let view = modalViews.allCommands(channelId, message, image)
   if(viewObject){
     view = viewObject;

@@ -55,7 +55,7 @@ sbConnection.attachListeners = function() {
     let message = event.text.replace(`<@${botId}>`, "").trim();
     //Check if message was sent by BOT to avoid infinite loop
     let userId = event.user;
-    console.log(JSON.stringify(event))
+    // console.log(JSON.stringify(event))
     //Adding 2 checks for extra security, to avoid infinite loop when bot calls itself in help or error message
     if(event.subtype && event.subtype == 'bot_message'){
       return;
