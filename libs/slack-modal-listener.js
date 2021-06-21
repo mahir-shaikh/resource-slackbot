@@ -15,7 +15,6 @@ smlConnection.attachModalCommand = function() {
   bot.command("/appdemousagebot", async ({ command, ack, body, client }) => {
     // Acknowledge the command request
     await ack();
-    console.log(JSON.stringify(command))
     let channelId = command.channel_id;
     // if(command.channel_name != 'directmessage'){
     //     modalController.openModal(client, body, channelId);
