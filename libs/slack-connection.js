@@ -56,7 +56,12 @@ sbConnection.attachListeners = function() {
   bot.event("app_mention", async ({ event, client, context }) => {  
     botId = context.botUserId
     let message = event.text.replace(`<@${botId}>`, "").trim();
-    messageController.handleMessage(message, event, botId);
+    //Check if message was sent by BOT to avoid infinite loop
+    let userId = event.user;
+    console.log(JSON.stringify(event))
+    if(userId && userId != botId){
+      messageController.handleMessage(message, event, botId);
+    }
   });
 };
 

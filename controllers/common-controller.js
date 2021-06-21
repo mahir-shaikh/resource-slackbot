@@ -447,7 +447,7 @@ commonController.welcomeUser =function ({channelId, userId, botId}){
     • *claim|<name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
     • *release|<name>*: Release your claim on resource with name <name>
     
-    I also provide dialog box functionality. You can use that using \`/resourcebot\`
+    I also provide dialog box functionality. You can use that using \`/appdemousagebot\`
   `
   let image = emojis.welcome
   sendEphemeralMessageToChannel( {channelId, text, image, userId })
@@ -490,5 +490,5 @@ commonController.httpGet = function(url,token, cb){
 //     • */claim <name>|<duration>|<description>*:   Claim resource with name <name>| for <duration> in days| along with some description
 //     • */release <name>*: Release your claim on resource with name <name> 
     
-//     I also provide dialog box functionality. You can use that using \`/resourcebot\`
+//     I also provide dialog box functionality. You can use that using \`/appdemousagebot\`
 //   `
