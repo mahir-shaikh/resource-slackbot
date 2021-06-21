@@ -32,9 +32,7 @@ sbConnection.setBot = setBot
 
 sbConnection.attachListeners = function() {
   bot.event("group_deleted", async ({ event, client, context }) => {
-    console.log('inside group_deleted')
     let channelId = event.channel;
-    console.log('CHANNEL ID in GROUP DELETED', channelId)
     commonController.deleteAllResourcesBelongingToChannel(channelId);
   });
   
@@ -47,7 +45,6 @@ sbConnection.attachListeners = function() {
   
   
   bot.event("channel_deleted", async ({ event, client, context }) => {
-    console.log('inside channel_deleted')
     let channelId = event.channel;
     commonController.deleteAllResourcesBelongingToChannel(channelId);
   });
@@ -59,6 +56,10 @@ sbConnection.attachListeners = function() {
     //Check if message was sent by BOT to avoid infinite loop
     let userId = event.user;
     console.log(JSON.stringify(event))
+    //Adding 2 checks for extra security, to avoid infinite loop when bot calls itself in help or error message
+    if(event.subtype && event.subtype == 'bot_message'){
+      return;
+    }
     if(userId && userId != botId){
       messageController.handleMessage(message, event, botId);
     }

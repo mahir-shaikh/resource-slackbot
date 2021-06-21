@@ -655,6 +655,5 @@ views.error = function(text, image) {
       }
     ]
   };
-  console.log(JSON.stringify(obj))
   return obj;
 };

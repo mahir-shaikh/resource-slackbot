@@ -58,7 +58,7 @@ async function onCronTick() {
           sendNotification(aboutToExpireResource);
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
 }
