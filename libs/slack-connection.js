@@ -9,6 +9,7 @@ var commonController = require('../controllers/common-controller')
 
 var bot;
 var botId;
+var lastActiveClientMessageId;
 
 sbConnection.createBot = function() {
   // Slack Connection
@@ -33,6 +34,10 @@ sbConnection.setBot = setBot
 sbConnection.attachListeners = function() {
   bot.event("group_deleted", async ({ event, client, context }) => {
     let channelId = event.channel;
+    // To avoid same response which happens when BOT is asleep and wakes up and gets multiple calls
+    if(isSameMessage(event)){
+      return
+    }
     commonController.deleteAllResourcesBelongingToChannel(channelId);
   });
   
@@ -40,12 +45,20 @@ sbConnection.attachListeners = function() {
     botId = context.botUserId
     let channelId = event.channel;
     let userId = event.user;
+    // To avoid same response which happens when BOT is asleep and wakes up and gets multiple calls
+    if(isSameMessage(event)){
+      return
+    }
     commonController.welcomeUser({channelId, userId, botId})
   });
   
   
   bot.event("channel_deleted", async ({ event, client, context }) => {
     let channelId = event.channel;
+    // To avoid same response which happens when BOT is asleep and wakes up and gets multiple calls
+    if(isSameMessage(event)){
+      return
+    }
     commonController.deleteAllResourcesBelongingToChannel(channelId);
   });
   
@@ -59,6 +72,11 @@ sbConnection.attachListeners = function() {
     //Adding 2 checks for extra security, to avoid infinite loop when bot calls itself in help or error message
     if(event.subtype && event.subtype == 'bot_message'){
       return;
+    }
+
+    // To avoid same response which happens when BOT is asleep and wakes up and gets multiple calls
+    if(isSameMessage(event)){
+      return
     }
     if(userId && userId != botId){
       messageController.handleMessage(message, event, botId);
@@ -78,3 +96,12 @@ sbConnection.attachMessageAction = function() {
     messageController.releseResource({name: resource_name, channelId ,owner})
   });
 };
+
+function isSameMessage(event){
+  if(lastActiveClientMessageId && lastActiveClientMessageId == event.client_msg_id){
+    return true
+  }else{
+    lastActiveClientMessageId = event.client_msg_id
+    return false
+  }
+}
