@@ -10,7 +10,7 @@ views.allCommands = function(channelId, message = null , image = null) {
     callback_id: "resourcebot_master_modal",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot"
+      text: "Appdemo Bot"
     },
     blocks: [
       {
@@ -109,7 +109,7 @@ views.add = function(channelId) {
     callback_id: "modal_add_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Add"
+      text: "Appdemo Bot - Add"
     },
     blocks: [
       {
@@ -175,7 +175,7 @@ views.addNew = function(initialView){
     callback_id: "modal_add_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Add"
+      text: "Appdemo Bot - Add"
     },
     blocks: [...originalView.blocks],
     
@@ -197,7 +197,7 @@ views.claim = function({channelId, listOfAvailableOptions, listOfMyOptions, init
     callback_id: "modal_claim_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Claim"
+      text: "Appdemo Bot - Claim"
     },
     blocks: [
       {
@@ -324,7 +324,7 @@ views.remove = function(channelId, listOfOptions) {
     callback_id: "modal_remove_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Remove"
+      text: "Appdemo Bot - Remove"
     },
     blocks: [
       {
@@ -382,7 +382,7 @@ views.release = function(channelId, listOfOptions) {
     callback_id: "modal_release_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Release"
+      text: "Appdemo Bot - Release"
     },
     blocks: [
       {
@@ -440,7 +440,7 @@ views.list = function(channelId, listOfAvalaibleOptions, listOfClaimedOptions, u
     callback_id: "modal_list_submit",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - List"
+      text: "Appdemo Bot - List"
     },
     submit: {
       type: "plain_text",
@@ -643,7 +643,7 @@ views.error = function(text, image) {
     callback_id: "resourcebot_error_modal",
     title: {
       type: "plain_text",
-      text: "Appdemo Usage Bot - Error"
+      text: "Appdemo Bot - Error"
     },
     blocks: [
       {
