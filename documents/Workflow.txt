@@ -1,0 +1,106 @@
+Slackbot - idea: appdemo current usage/ shared resources
+
+list = List all resources
+list|available =  List all resources which are currently available
+
+add|<name>  				Add a resource with name <name>
+add|<name>,<name>,<name>,... add multiple resources
+
+remove|<name>             Remove the resource with name <name>
+
+claim|<name>|[duration] ""   Claim resource with name <name>
+                          If [duration] is not applied, defaults to 1 hour.
+                          Example durations are: "for 1 day", "until tonight"
+						  
+release|<name>            Release your claim on resource with name <name>
+
+
+
+----------------------------------------
+it will maintain a list of all demos, list of available, anyone can claim, release(if claimed) a demo bucket
+
+claim karega toh duration puchega, if the duration is not set then default duration(2 weeks - 1 sprint) 
+when duration is about to end, confirm karega with the person who claimed, if he wants to extend, unless he/she has released the resource
+
+Sabkuch mongo me store karege
+----------------------------------------
+Whenever we add the Bot in a group, it will create a collection for that group - DB - USED CHANNEL ID in existing resource schema as too complicated which is not necessary given the scope of the solution
+
+Channel name and post the message in the same channel - DONE
+
+multi add - DONE
+
+Cron Job - DONE
+
+Deploy - DONE
+
+About to Expire - Ask the owner to extend if required - DONE
+
+Error text when you add the bot in the channel - DONE
+
+remove should be password protected? - DONE (added check if already claimed, also added --force flag)
+
+Issue: Multiple add - unique name in list - DONE
+
+---------------
+Refactor  
+	- Avoid passing channelId to each function - DONE, using currentChannelId as var
+	- Move switch case from sb-connection to db-connection inside a method and just call that method from sb-connection. This will ease checkResourceExists
+	- DB CONNECTION - SINGLE LINE PROMISE - DONE
+	- SLACK MODAL - different for modal and for message - DONE
+	
+Test cases - DONE
+Automation testing - List of commands to run and expected result.
+Logs bhi banane hai
+-----------------------
+Blockkit builder - done
+
+Modal - Done - Need to do for all, also Add new Option instead of comma separation - NEED TO DO FOR REMAINING COMMANDS - DONE
+
+Notification visible only to owner(emperical) + buttons to extend - DONE, UNDONE intentionally, user can easily miss the message if not online
+
+join - emperal - bot welcome, how do i work, please mute to avoid notifications  - DONE
+
+examples of each app command - DONE
+
+SLASH/MODAL should only be available if bot is present in chat/channel/group - ADDED NULL CHECKS
+
+-----USER CASE------
+release multiple - Upu
+
+----------------------------------------------------
+Add - Emoji - DONE
+List - Release/Claim - DONE
+BACK option on List - DONE
+
+Refactor - DB-connection 
+	Modal - DONE
+	Slash  - DONE
+	Message - DONE
+	
+Normal Notification on about to expire - buttons - DONE
+Emperical Message when new user joins - DONE
+
+getMyClaimed + get available in list of dropdown - DONE
+
+Add/update null checks for Modals - DONE
+
+BOD ID - Get dynamically and pass in all correctly. - DONE
+
+Seemless transition to NEW Bot - DONE
+	CODE - Update
+	SLACK - Permission etc etc, 
+	env
+--------------------------------------
+Docs/ReadMe - 
+Website
+Slack Publish
+
+Empheral message should go away
+-----------------------------------------
+Grammar:
+were / was in Multiple Resources - DONE
+Image - Block -> text - DONE
+
+
+

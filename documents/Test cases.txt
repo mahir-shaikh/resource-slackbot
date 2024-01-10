@@ -1,0 +1,79 @@
+Test Cases:
+-------------------------------------------------
+Add
+-Same, new
+
+Claim
+- Claim
+- Extend claim
+- From LIST
+- Cannot claim if others have claimed
+
+Remove
+- Remove
+- claimed cannot be deleted
+
+Release
+- Release own
+- From LIST
+
+List
+- Remove all when channel deleted
+----------------------------------------------
+@Resource Bot Dev add|Test1 - new
+@Resource Bot Dev add|Test1 - Same
+
+@Resource Bot Dev claim|Test1|12|Testing claim via message
+@Resource Bot Dev claim|Test1|3|Extending claim
+By SOMEONE ELSE: @Resource Bot Dev claim|Test1|3|Extending claim
+
+@Resource Bot Dev remove|Test3 - remove fail as it is claimed
+@Resource Bot Dev remove|Test3 --force     - remove success even though it is claimed
+@Resource Bot Dev remove|Test3 - FAIL as no such resource exists
+@Resource Bot Dev remove|Test3 --force     - FAIL as no such resource exists
+
+@Resource Bot Dev release|Test1 - successful
+@Resource Bot Dev release|Test1 - No need to release as Test1 is already available
+By SOMEONE ELSE: @Resource Bot Dev release|Test2 - You cannot release Test2 as it was not claimed by you.
+----------------------
+Modal Add Test2 - new
+Modal Add Test2 - same
+
+Modal Claim Test2 , Testing claim via modal
+Modal Claim Test2 , Extending Claim ---------- Update from overflow menu(...)
+
+Modal Add Test3
+Modal List - Claim Test3
+Modal List - Claim Test3 , Extending Claim ---------- Update from overflow menu(...)
+
+Modal Claim Test1 - so that we can test 2 release cases
+BY SOMEONE ELSE - Try to release without claiming anything
+Modal Release Test 1
+Modal List Release Test 2
+
+Modal Remove Test1
+
+
+Modal Add Test1
+Modal Claim Test 1
+
+Now DB should have 2 resources (Test1 claimed, Test2 free)
+Delete CHANNEL
+Now DB should have 0 resources
+
+----------------------------------------------------------------------
+/add Test1 - new
+/add Test2,Test3 - Same + Multiple
+
+/claim Test1|12|Testing claim via slash
+/claim Test1|3|Extending claim
+By SOMEONE ELSE: /claim Test1|3|Extending claim
+
+/delete Test1 - remove fail as it is claimed
+/delete Test3 --force     - remove success even though it is claimed
+/delete Test3 - FAIL as no such resource exists
+/delete Test3 --force     - FAIL as no such resource exists
+
+By SOMEONE ELSE: /release Test1 - You cannot release Test2 as it was not claimed by you.
+/release Test1 - successful
+/release Test1 - No need to release as Test1 is already available
