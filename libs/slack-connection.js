@@ -21,6 +21,7 @@ sbConnection.createBot = function() {
   // botId = "U021XGY7X9B"; // TODO: Get Bot Id dynamycally
   
     // Start your app
+  console.log('BOT CONNECTED ON:', process.env.PORT || 3000)
   return bot.start(process.env.PORT || 3000)
     
 };
@@ -68,7 +69,7 @@ sbConnection.attachListeners = function() {
     let message = event.text.replace(`<@${botId}>`, "").trim();
     //Check if message was sent by BOT to avoid infinite loop
     let userId = event.user;
-    console.log("Inside app_metion", JSON.stringify(event), JSON.stringify(client))
+    // console.log("Inside app_metion", JSON.stringify(event), JSON.stringify(client))
     //Adding 2 checks for extra security, to avoid infinite loop when bot calls itself in help or error message
     if(event.subtype && event.subtype == 'bot_message'){
       return;

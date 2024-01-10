@@ -13,6 +13,7 @@ smlConnection.attachModalCommand = function() {
   bot = sbConnection.bot
   // bot.command("/resourcebot", async (obj) => {
   bot.command("/appdemousagebot", async ({ command, ack, body, client }) => {
+    console.log('INSIDE SLASH COMMAND')
     // Acknowledge the command request
     await ack();
     let channelId = command.channel_id;

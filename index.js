@@ -7,7 +7,7 @@ const sbConnection = require('./libs/slack-connection')
 const smlConnection = require('./libs/slack-modal-listener')
 // const sslConnection = require('./libs/slack-slash-listener')
 const cronJob = require('./libs/cron-job')
-// const express = require('express');
+const express = require('express');
 
 // Connection to MongoDB
 dbConnect.connect().then(() => {
@@ -43,18 +43,18 @@ sbConnection.createBot().then(() => {
 
 
 // var publicDir = require('path').join(__dirname, '/assets');
-// const app = express();
+const app = express();
 // app.use(express.static(publicDir));
-// app.get("/", (req, res) => {
-//     res.send("Thing are looking good!!!")
-// });
+app.get("/", (req, res) => {
+    res.send("Thing are looking good!!!")
+});
 
 // (async function () {
 //     const url = await ngrok.connect();
 //     console.log(url)
 // })();
 
-// app.listen(process.env.PORT || 9999, () => {
-//     console.log(`Example app listening at http://localhost:${process.env.PORT || 9999}`)
-// })
+app.listen(process.env.PORT || 9999, () => {
+    console.log(`Example app listening at http://localhost:${process.env.PORT || 9999}`)
+})
 
